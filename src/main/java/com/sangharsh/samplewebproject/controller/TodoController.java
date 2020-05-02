@@ -32,7 +32,7 @@ public class TodoController {
 
     @RequestMapping(value = "/add-todo", method = RequestMethod.GET)
     public String showAddTodoPage(ModelMap modelMap) {
-        modelMap.addAttribute("todo", new Todo(0, (String) modelMap.get("name"), "too lazy to think of something", LocalDate.now(), false));
+        modelMap.addAttribute("todo", new Todo(0, (String) modelMap.get("name"), "too lazy to think of something", new Date(), false));
         return "todo";
     }
 
@@ -41,7 +41,7 @@ public class TodoController {
         if (result.hasErrors()) {
             return "todo";
         }
-        service.addTodo((String) modelMap.get("name"), todo.getDesc(), LocalDate.now(), false);
+        service.addTodo((String) modelMap.get("name"), todo.getDesc(), todo.getTargetDate(), false);
         return "redirect:/list-todos";
     }
 
@@ -70,7 +70,7 @@ public class TodoController {
 
     @InitBinder
     public void fieldBinder(WebDataBinder binder){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
 

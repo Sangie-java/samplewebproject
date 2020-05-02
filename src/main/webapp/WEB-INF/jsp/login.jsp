@@ -4,11 +4,12 @@
     <title>First Web Application</title>
 </head>
 <body>
-<span style="color: red; ">${errorMessage}</span>
 <form method="post">
     Name: <input type="text" name="name"/>
     Password: <input type="password" name="password">
     <input type="submit" name="submit"/>
+    <br>
+    <span style="color: red; ">${errorMessage}</span>
 </form>
 </body>
 <script src="webjars/jquery/3.2.1/jquery.min.js"></script>

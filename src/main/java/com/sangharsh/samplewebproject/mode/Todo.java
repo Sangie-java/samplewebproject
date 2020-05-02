@@ -14,6 +14,7 @@ public class Todo {
     }
 
     public Todo(int id, String user, String desc, LocalDate targetDate, boolean isDone) {
+        super();
         this.id = id;
         this.user = user;
         this.desc = desc;

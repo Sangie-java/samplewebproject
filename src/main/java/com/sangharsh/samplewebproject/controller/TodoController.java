@@ -3,16 +3,18 @@ package com.sangharsh.samplewebproject.controller;
 import com.sangharsh.samplewebproject.mode.Todo;
 import com.sangharsh.samplewebproject.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Controller
 @SessionAttributes("name")
@@ -64,6 +66,12 @@ public class TodoController {
         todo.setUser((String) modelMap.get("name"));
         service.updateTodo(todo);
         return "redirect:/list-todos";
+    }
+
+    @InitBinder
+    public void fieldBinder(WebDataBinder binder){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
 
 }

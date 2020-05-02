@@ -1,12 +1,7 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>>
-<html>
-<head>
-    <title>ToDos for ${name}</title>
-    <link href="webjars/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+<%@ include file="common/header.jspf" %>
+<%@ include file="common/navigation.jspf" %>
 <div class="container">
+    <title>ToDos for ${name}</title>
     <caption>Your todos are</caption>
     <br><br>
     <table class="table table-striped">
@@ -38,7 +33,4 @@
         <a class="button" href="/add-todo">Add a Todo</a>
     </div>
 </div>
-<script src="webjars/jquery/3.2.1/jquery.min.js"></script>
-<script src="webjars/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-</body>
-</html>
+<%@ include file="common/footer.jspf" %>

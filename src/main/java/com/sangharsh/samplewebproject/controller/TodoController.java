@@ -4,7 +4,8 @@ import com.sangharsh.samplewebproject.mode.Todo;
 import com.sangharsh.samplewebproject.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.format.datetime.DateFormatter;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 
 @Controller
@@ -25,14 +25,22 @@ public class TodoController {
 
     @RequestMapping(value = "/list-todos", method = RequestMethod.GET)
     public String showTodos(ModelMap modelMap) {
-        String name = (String) modelMap.get("name");
+        String name = getLoggedInUser();
         modelMap.put("todos", service.retrieveTodos(name));
         return "list-todos";
     }
 
+    private String getLoggedInUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails) {
+            return ((UserDetails) principal).getUsername();
+        }
+        return principal.toString();
+    }
+
     @RequestMapping(value = "/add-todo", method = RequestMethod.GET)
     public String showAddTodoPage(ModelMap modelMap) {
-        modelMap.addAttribute("todo", new Todo(0, (String) modelMap.get("name"), "too lazy to think of something", new Date(), false));
+        modelMap.addAttribute("todo", new Todo(0, getLoggedInUser(), "too lazy to think of something", new Date(), false));
         return "todo";
     }
 
@@ -41,12 +49,15 @@ public class TodoController {
         if (result.hasErrors()) {
             return "todo";
         }
-        service.addTodo((String) modelMap.get("name"), todo.getDesc(), todo.getTargetDate(), false);
+        service.addTodo(getLoggedInUser(), todo.getDesc(), todo.getTargetDate(), false);
         return "redirect:/list-todos";
     }
 
     @RequestMapping(value = "/delete-todo", method = RequestMethod.GET)
     public String deleteTodo(@RequestParam int id) {
+        if(id==5){
+            throw new RuntimeException();
+        }
         service.deleteTodo(id);
         return "redirect:/list-todos";
     }
@@ -63,13 +74,13 @@ public class TodoController {
         if (result.hasErrors()) {
             return "todo";
         }
-        todo.setUser((String) modelMap.get("name"));
+        todo.setUser(getLoggedInUser());
         service.updateTodo(todo);
         return "redirect:/list-todos";
     }
 
     @InitBinder
-    public void fieldBinder(WebDataBinder binder){
+    public void fieldBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy");
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
     }
